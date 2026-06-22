@@ -1,0 +1,1778 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <!-- ═══ SEO & Meta ═══ -->
+  <title>Guru Edge — Indian Stock Scanner | NSE Swing Trade Intelligence</title>
+  <meta name="description"
+    content="Guru Edge is an AI-powered Indian stock market scanner for NSE/BSE swing traders. Combines EMA, RSI, Fibonacci, Trendline analysis and fundamental screening to shortlist the best large and mid-cap stocks for 5–10% swing trades." />
+  <meta name="keywords"
+    content="Indian stock scanner, NSE swing trade, EMA RSI scanner, Nifty 100 midcap scanner, Fibonacci retracement NSE, stock market India, swing trading tool, technical analysis India, fundamental analysis NSE, FII DII tracker" />
+  <meta name="author" content="Guru Edge" />
+  <meta name="robots" content="index, follow" />
+  <meta name="theme-color" content="#1E6FD9" />
+
+  <!-- ═══ Open Graph ═══ -->
+  <meta property="og:type"        content="website" />
+  <meta property="og:title"       content="Guru Edge — Indian Stock Scanner" />
+  <meta property="og:description" content="AI-powered NSE swing trade scanner combining EMA, RSI, Fibonacci, Trendlines and Fundamentals." />
+  <meta property="og:image"       content="https://gururedge.in/og-image.png" />
+  <meta property="og:url"         content="https://gururedge.in" />
+  <meta property="og:site_name"   content="Guru Edge" />
+
+  <!-- ═══ Twitter Card ═══ -->
+  <meta name="twitter:card"        content="summary_large_image" />
+  <meta name="twitter:title"       content="Guru Edge — Indian Stock Scanner" />
+  <meta name="twitter:description" content="AI-powered NSE swing trade scanner. EMA + RSI + Fibonacci + Fundamentals." />
+  <meta name="twitter:image"       content="https://gururedge.in/og-image.png" />
+
+  <!-- ═══ Canonical ═══ -->
+  <link rel="canonical" href="https://gururedge.in/" />
+
+  <!-- ═══ Fonts ═══ -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+
+  <style>
+    /* ═══════════════════════════════════════════════
+       TOKENS
+    ═══════════════════════════════════════════════ */
+    :root {
+      --navy:        #0A1628;
+      --navy-mid:    #112240;
+      --blue:        #1E6FD9;
+      --blue-light:  #3B8EF0;
+      --blue-pale:   #EBF3FD;
+      --green:       #00A86B;
+      --green-pale:  #E6F7F2;
+      --amber:       #F59E0B;
+      --amber-pale:  #FEF3C7;
+      --red:         #EF4444;
+      --red-pale:    #FEE2E2;
+      --silver:      #F0F4F8;
+      --silver-mid:  #E2E8F0;
+      --silver-dark: #CBD5E1;
+      --text-primary:#0A1628;
+      --text-mid:    #334155;
+      --text-soft:   #64748B;
+      --white:       #FFFFFF;
+
+      --radius-sm:   6px;
+      --radius-md:   12px;
+      --radius-lg:   18px;
+      --radius-xl:   24px;
+
+      --shadow-sm:   0 1px 3px rgba(10,22,40,.08), 0 1px 2px rgba(10,22,40,.04);
+      --shadow-md:   0 4px 16px rgba(10,22,40,.10), 0 2px 6px rgba(10,22,40,.06);
+      --shadow-lg:   0 12px 40px rgba(10,22,40,.12), 0 4px 12px rgba(10,22,40,.08);
+      --shadow-blue: 0 4px 20px rgba(30,111,217,.25);
+      --shadow-green:0 4px 20px rgba(0,168,107,.20);
+    }
+
+    /* ═══════════════════════════════════════════════
+       RESET
+    ═══════════════════════════════════════════════ */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--silver);
+      color: var(--text-primary);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* ═══════════════════════════════════════════════
+       TICKER TAPE
+    ═══════════════════════════════════════════════ */
+    .ticker-wrap {
+      background: var(--navy);
+      overflow: hidden;
+      padding: 8px 0;
+      border-bottom: 2px solid var(--blue);
+    }
+    .ticker-track {
+      display: flex;
+      width: max-content;
+      animation: ticker 40s linear infinite;
+    }
+    .ticker-track:hover { animation-play-state: paused; }
+    .ticker-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 0 28px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: rgba(255,255,255,.85);
+      white-space: nowrap;
+      border-right: 1px solid rgba(255,255,255,.12);
+    }
+    .ticker-item .sym { color: #fff; font-weight: 500; }
+    .ticker-item .up  { color: #34D399; }
+    .ticker-item .dn  { color: #F87171; }
+    .ticker-dot { width: 5px; height: 5px; border-radius: 50%; }
+    .ticker-dot.up  { background: #34D399; }
+    .ticker-dot.dn  { background: #F87171; }
+    @keyframes ticker {
+      from { transform: translateX(0); }
+      to   { transform: translateX(-50%); }
+    }
+
+    /* ═══════════════════════════════════════════════
+       HEADER / NAV
+    ═══════════════════════════════════════════════ */
+    .header {
+      background: var(--white);
+      border-bottom: 1px solid var(--silver-mid);
+      box-shadow: var(--shadow-sm);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .header-inner {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 0 28px;
+      height: 66px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 24px;
+    }
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      text-decoration: none;
+    }
+    .logo-icon {
+      width: 38px;
+      height: 38px;
+      background: linear-gradient(135deg, var(--blue) 0%, #0D4FA8 100%);
+      border-radius: var(--radius-sm);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: var(--shadow-blue);
+    }
+    .logo-icon svg { width: 22px; height: 22px; }
+    .logo-text {
+      font-family: 'Sora', sans-serif;
+      font-weight: 800;
+      font-size: 20px;
+      color: var(--navy);
+      letter-spacing: -.4px;
+    }
+    .logo-text span { color: var(--blue); }
+    .logo-tag {
+      font-size: 10px;
+      font-weight: 500;
+      color: var(--text-soft);
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      margin-top: 2px;
+    }
+    .nav {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .nav a {
+      font-size: 13.5px;
+      font-weight: 500;
+      color: var(--text-mid);
+      text-decoration: none;
+      padding: 6px 14px;
+      border-radius: var(--radius-sm);
+      transition: all .18s;
+    }
+    .nav a:hover, .nav a.active {
+      background: var(--blue-pale);
+      color: var(--blue);
+    }
+    .nav-cta {
+      background: var(--blue) !important;
+      color: var(--white) !important;
+      border-radius: var(--radius-sm) !important;
+      padding: 8px 18px !important;
+      box-shadow: var(--shadow-blue);
+      transition: all .18s !important;
+    }
+    .nav-cta:hover {
+      background: var(--blue-light) !important;
+      transform: translateY(-1px);
+    }
+    .market-status {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--text-soft);
+    }
+    .status-dot {
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      background: var(--green);
+      box-shadow: 0 0 0 3px rgba(0,168,107,.2);
+      animation: pulse-green 2s ease infinite;
+    }
+    @keyframes pulse-green {
+      0%,100% { box-shadow: 0 0 0 3px rgba(0,168,107,.2); }
+      50%      { box-shadow: 0 0 0 6px rgba(0,168,107,.08); }
+    }
+
+    /* ═══════════════════════════════════════════════
+       HERO BANNER
+    ═══════════════════════════════════════════════ */
+    .hero {
+      background: linear-gradient(135deg, var(--navy) 0%, var(--navy-mid) 60%, #1A3A6E 100%);
+      padding: 56px 28px 64px;
+      position: relative;
+      overflow: hidden;
+    }
+    .hero::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(ellipse 60% 80% at 80% 50%, rgba(30,111,217,.18) 0%, transparent 70%),
+        radial-gradient(ellipse 40% 60% at 10% 80%, rgba(0,168,107,.10) 0%, transparent 70%);
+    }
+    .hero-grid {
+      position: absolute;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(255,255,255,.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,.03) 1px, transparent 1px);
+      background-size: 40px 40px;
+    }
+    .hero-inner {
+      max-width: 1400px;
+      margin: 0 auto;
+      position: relative;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 48px;
+      align-items: center;
+    }
+    .hero-eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(30,111,217,.25);
+      border: 1px solid rgba(30,111,217,.4);
+      border-radius: 999px;
+      padding: 5px 14px;
+      font-size: 11.5px;
+      font-weight: 600;
+      color: #7EB8FF;
+      letter-spacing: .06em;
+      text-transform: uppercase;
+      margin-bottom: 20px;
+    }
+    .hero-eyebrow-dot {
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: #7EB8FF;
+      animation: pulse-blue 1.8s ease infinite;
+    }
+    @keyframes pulse-blue {
+      0%,100% { opacity: 1; }
+      50%      { opacity: .4; }
+    }
+    .hero h1 {
+      font-family: 'Sora', sans-serif;
+      font-size: clamp(28px, 4vw, 46px);
+      font-weight: 800;
+      color: var(--white);
+      line-height: 1.15;
+      letter-spacing: -.6px;
+      margin-bottom: 18px;
+    }
+    .hero h1 em {
+      font-style: normal;
+      background: linear-gradient(90deg, #60B4FF, #34D399);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .hero-sub {
+      font-size: 15.5px;
+      line-height: 1.7;
+      color: rgba(255,255,255,.7);
+      margin-bottom: 32px;
+      max-width: 520px;
+    }
+    .hero-badges {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 36px;
+    }
+    .badge {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(255,255,255,.08);
+      border: 1px solid rgba(255,255,255,.14);
+      border-radius: var(--radius-sm);
+      padding: 6px 12px;
+      font-size: 12px;
+      font-weight: 500;
+      color: rgba(255,255,255,.85);
+    }
+    .badge-dot {
+      width: 6px; height: 6px;
+      border-radius: 50%;
+    }
+    .hero-stats {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+    }
+    .hero-stat {
+      text-align: center;
+    }
+    .hero-stat-val {
+      font-family: 'Sora', sans-serif;
+      font-size: 28px;
+      font-weight: 800;
+      color: var(--white);
+      line-height: 1;
+    }
+    .hero-stat-lbl {
+      font-size: 11px;
+      color: rgba(255,255,255,.5);
+      text-transform: uppercase;
+      letter-spacing: .08em;
+      margin-top: 4px;
+    }
+
+    /* Chart Preview in Hero */
+    .hero-chart {
+      background: rgba(255,255,255,.06);
+      border: 1px solid rgba(255,255,255,.12);
+      border-radius: var(--radius-lg);
+      padding: 24px;
+      backdrop-filter: blur(8px);
+    }
+    .chart-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 20px;
+    }
+    .chart-title {
+      font-family: 'Sora', sans-serif;
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--white);
+    }
+    .chart-badge {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      background: rgba(0,168,107,.25);
+      color: #34D399;
+      padding: 3px 9px;
+      border-radius: 999px;
+      border: 1px solid rgba(52,211,153,.3);
+    }
+
+    /* ═══════════════════════════════════════════════
+       PIPELINE SECTION
+    ═══════════════════════════════════════════════ */
+    .pipeline {
+      background: var(--white);
+      padding: 48px 28px;
+      border-bottom: 1px solid var(--silver-mid);
+    }
+    .pipeline-inner {
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+    .section-label {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      color: var(--blue);
+      margin-bottom: 10px;
+    }
+    .section-title {
+      font-family: 'Sora', sans-serif;
+      font-size: clamp(22px, 3vw, 30px);
+      font-weight: 700;
+      color: var(--navy);
+      letter-spacing: -.4px;
+      margin-bottom: 6px;
+    }
+    .section-sub {
+      font-size: 14.5px;
+      color: var(--text-soft);
+      margin-bottom: 36px;
+    }
+    .pipeline-steps {
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      gap: 0;
+      position: relative;
+    }
+    .pipeline-steps::before {
+      content: '';
+      position: absolute;
+      top: 28px;
+      left: 8%;
+      right: 8%;
+      height: 2px;
+      background: linear-gradient(90deg, var(--blue), var(--green));
+      z-index: 0;
+    }
+    .pipe-step {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      padding: 0 8px;
+      position: relative;
+      z-index: 1;
+    }
+    .pipe-num {
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Sora', sans-serif;
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--white);
+      margin-bottom: 14px;
+      box-shadow: var(--shadow-md);
+      transition: transform .2s;
+    }
+    .pipe-step:hover .pipe-num { transform: scale(1.1); }
+    .pipe-name {
+      font-weight: 600;
+      font-size: 13px;
+      color: var(--navy);
+      margin-bottom: 5px;
+    }
+    .pipe-desc {
+      font-size: 11.5px;
+      color: var(--text-soft);
+      line-height: 1.5;
+    }
+
+    /* ═══════════════════════════════════════════════
+       MAIN DASHBOARD
+    ═══════════════════════════════════════════════ */
+    .dashboard {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 36px 28px 64px;
+    }
+    .dash-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 28px;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+    .scan-meta {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+    .scan-badge {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      background: var(--white);
+      border: 1px solid var(--silver-mid);
+      border-radius: var(--radius-sm);
+      padding: 7px 14px;
+      font-size: 12.5px;
+      font-weight: 500;
+      color: var(--text-mid);
+      box-shadow: var(--shadow-sm);
+    }
+    .scan-badge strong { color: var(--navy); }
+    .btn-scan {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: linear-gradient(135deg, var(--blue), #0D4FA8);
+      color: var(--white);
+      border: none;
+      border-radius: var(--radius-md);
+      padding: 11px 24px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      box-shadow: var(--shadow-blue);
+      transition: all .2s;
+      font-family: 'Inter', sans-serif;
+    }
+    .btn-scan:hover { transform: translateY(-2px); box-shadow: 0 8px 28px rgba(30,111,217,.35); }
+    .btn-scan:active { transform: translateY(0); }
+
+    /* ═══ Summary Cards ═══ */
+    .summary-grid {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 16px;
+      margin-bottom: 32px;
+    }
+    .sum-card {
+      background: var(--white);
+      border-radius: var(--radius-md);
+      padding: 20px 18px;
+      box-shadow: var(--shadow-sm);
+      border: 1px solid var(--silver-mid);
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      transition: all .2s;
+      cursor: default;
+    }
+    .sum-card:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-md);
+    }
+    .sum-label {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      color: var(--text-soft);
+    }
+    .sum-val {
+      font-family: 'Sora', sans-serif;
+      font-size: 30px;
+      font-weight: 800;
+      line-height: 1;
+    }
+    .sum-sub {
+      font-size: 12px;
+      color: var(--text-soft);
+    }
+    .sum-card.aplus2 { border-top: 3px solid #8B5CF6; }
+    .sum-card.aplus2 .sum-val { color: #8B5CF6; }
+    .sum-card.aplus  { border-top: 3px solid var(--blue); }
+    .sum-card.aplus  .sum-val { color: var(--blue); }
+    .sum-card.a      { border-top: 3px solid var(--green); }
+    .sum-card.a      .sum-val { color: var(--green); }
+    .sum-card.b      { border-top: 3px solid var(--amber); }
+    .sum-card.b      .sum-val { color: var(--amber); }
+    .sum-card.total  { border-top: 3px solid var(--navy); }
+    .sum-card.total  .sum-val { color: var(--navy); }
+
+    /* ═══ Filters ═══ */
+    .filter-bar {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+    }
+    .filter-label {
+      font-size: 12.5px;
+      font-weight: 600;
+      color: var(--text-soft);
+    }
+    .filter-btn {
+      padding: 6px 15px;
+      border-radius: 999px;
+      font-size: 12.5px;
+      font-weight: 500;
+      border: 1.5px solid var(--silver-mid);
+      background: var(--white);
+      color: var(--text-mid);
+      cursor: pointer;
+      transition: all .15s;
+      font-family: 'Inter', sans-serif;
+    }
+    .filter-btn:hover { border-color: var(--blue); color: var(--blue); }
+    .filter-btn.active { background: var(--blue); color: var(--white); border-color: var(--blue); }
+    .filter-btn.f-aplus2.active { background: #8B5CF6; border-color: #8B5CF6; }
+    .filter-btn.f-a.active    { background: var(--green); border-color: var(--green); }
+    .filter-btn.f-b.active    { background: var(--amber); border-color: var(--amber); }
+
+    /* ═══ Stock Cards Grid ═══ */
+    .stocks-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+      gap: 20px;
+    }
+    .stock-card {
+      background: var(--white);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-sm);
+      border: 1px solid var(--silver-mid);
+      overflow: hidden;
+      transition: all .22s;
+      position: relative;
+    }
+    .stock-card:hover {
+      transform: translateY(-3px);
+      box-shadow: var(--shadow-lg);
+    }
+    .stock-card.grade-aplus2 { border-top: 3px solid #8B5CF6; }
+    .stock-card.grade-aplus  { border-top: 3px solid var(--blue); }
+    .stock-card.grade-a      { border-top: 3px solid var(--green); }
+    .stock-card.grade-b      { border-top: 3px solid var(--amber); }
+
+    /* Pulse glow for A++ */
+    .stock-card.grade-aplus2::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: var(--radius-lg);
+      box-shadow: 0 0 0 0 rgba(139,92,246,.4);
+      animation: glow-pulse 2.5s ease-in-out infinite;
+      pointer-events: none;
+    }
+    @keyframes glow-pulse {
+      0%,100% { box-shadow: 0 0 0 0 rgba(139,92,246,.3); }
+      50%      { box-shadow: 0 0 0 8px rgba(139,92,246,.08); }
+    }
+
+    .card-header {
+      padding: 18px 20px 14px;
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 12px;
+    }
+    .card-symbol {
+      font-family: 'Sora', sans-serif;
+      font-size: 19px;
+      font-weight: 800;
+      color: var(--navy);
+      letter-spacing: -.3px;
+    }
+    .card-sector {
+      font-size: 11.5px;
+      color: var(--text-soft);
+      font-weight: 500;
+      margin-top: 2px;
+    }
+    .grade-pill {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      padding: 5px 12px;
+      border-radius: 999px;
+      font-family: 'Sora', sans-serif;
+      font-size: 12px;
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+    .grade-pill.aplus2 { background: #F3EEFF; color: #8B5CF6; border: 1.5px solid #C4B5FD; }
+    .grade-pill.aplus  { background: var(--blue-pale); color: var(--blue); border: 1.5px solid #BFDBFE; }
+    .grade-pill.a      { background: var(--green-pale); color: var(--green); border: 1.5px solid #A7F3D0; }
+    .grade-pill.b      { background: var(--amber-pale); color: #92400E; border: 1.5px solid #FDE68A; }
+
+    .card-price-row {
+      padding: 0 20px 14px;
+      display: flex;
+      align-items: baseline;
+      gap: 10px;
+    }
+    .card-price {
+      font-family: 'Sora', sans-serif;
+      font-size: 26px;
+      font-weight: 700;
+      color: var(--navy);
+    }
+    .card-change {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 13px;
+      font-weight: 500;
+      padding: 2px 8px;
+      border-radius: 999px;
+    }
+    .card-change.up { background: var(--green-pale); color: var(--green); }
+    .card-change.dn { background: var(--red-pale);   color: var(--red); }
+
+    /* Progress bar — price between SL and target */
+    .price-track-wrap { padding: 0 20px 16px; }
+    .price-track-labels {
+      display: flex;
+      justify-content: space-between;
+      font-size: 10.5px;
+      color: var(--text-soft);
+      margin-bottom: 5px;
+      font-family: 'JetBrains Mono', monospace;
+    }
+    .price-track {
+      height: 6px;
+      background: var(--silver);
+      border-radius: 999px;
+      position: relative;
+      overflow: hidden;
+    }
+    .price-track-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #F87171, #FCD34D, #34D399);
+      border-radius: 999px;
+    }
+    .price-track-dot {
+      position: absolute;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      width: 12px;
+      height: 12px;
+      background: var(--navy);
+      border: 2px solid var(--white);
+      border-radius: 50%;
+      box-shadow: 0 1px 4px rgba(0,0,0,.2);
+    }
+
+    /* Signal tags */
+    .card-signals { padding: 0 20px 16px; display: flex; flex-wrap: wrap; gap: 6px; }
+    .sig-tag {
+      font-size: 11px;
+      font-weight: 500;
+      padding: 3px 9px;
+      border-radius: var(--radius-sm);
+      background: var(--silver);
+      color: var(--text-mid);
+      border: 1px solid var(--silver-mid);
+    }
+    .sig-tag.ema   { background: #EFF6FF; color: #1D4ED8; border-color: #BFDBFE; }
+    .sig-tag.rsi   { background: var(--green-pale); color: #065F46; border-color: #A7F3D0; }
+    .sig-tag.tl    { background: #FFF7ED; color: #92400E; border-color: #FDE68A; }
+    .sig-tag.fib   { background: #F5F3FF; color: #5B21B6; border-color: #DDD6FE; }
+    .sig-tag.fund  { background: var(--green-pale); color: #065F46; border-color: #A7F3D0; }
+    .sig-tag.fund.yellow { background: var(--amber-pale); color: #78350F; border-color: #FDE68A; }
+
+    /* Metrics row */
+    .card-metrics {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      border-top: 1px solid var(--silver-mid);
+    }
+    .card-metric {
+      padding: 12px 14px;
+      border-right: 1px solid var(--silver-mid);
+      text-align: center;
+    }
+    .card-metric:last-child { border-right: none; }
+    .metric-lbl {
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: .06em;
+      color: var(--text-soft);
+      font-weight: 600;
+      margin-bottom: 3px;
+    }
+    .metric-val {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--navy);
+    }
+    .metric-val.green { color: var(--green); }
+    .metric-val.red   { color: var(--red); }
+    .metric-val.amber { color: var(--amber); }
+
+    /* Fund grade row */
+    .card-fund {
+      padding: 10px 20px;
+      background: var(--silver);
+      border-top: 1px solid var(--silver-mid);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+    }
+    .fund-badge {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 11.5px;
+      font-weight: 600;
+    }
+    .fund-badge.green { color: var(--green); }
+    .fund-badge.yellow{ color: #92400E; }
+    .fund-badge.red   { color: var(--red); }
+    .fund-dot { width: 7px; height: 7px; border-radius: 50%; }
+    .fund-dot.green  { background: var(--green); }
+    .fund-dot.yellow { background: var(--amber); }
+    .fund-dot.red    { background: var(--red); }
+    .fund-note {
+      font-size: 11px;
+      color: var(--text-soft);
+      text-align: right;
+      max-width: 200px;
+      line-height: 1.4;
+    }
+
+    /* ═══════════════════════════════════════════════
+       HOW IT WORKS
+    ═══════════════════════════════════════════════ */
+    .howitworks {
+      background: var(--white);
+      padding: 56px 28px;
+      border-top: 1px solid var(--silver-mid);
+    }
+    .hiw-inner {
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+    .hiw-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 24px;
+      margin-top: 36px;
+    }
+    .hiw-card {
+      padding: 28px 24px;
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--silver-mid);
+      background: var(--silver);
+      transition: all .2s;
+    }
+    .hiw-card:hover {
+      background: var(--white);
+      box-shadow: var(--shadow-md);
+      transform: translateY(-2px);
+    }
+    .hiw-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: var(--radius-md);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 16px;
+      font-size: 22px;
+    }
+    .hiw-title {
+      font-family: 'Sora', sans-serif;
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--navy);
+      margin-bottom: 8px;
+    }
+    .hiw-desc {
+      font-size: 13.5px;
+      color: var(--text-soft);
+      line-height: 1.65;
+    }
+
+    /* ═══════════════════════════════════════════════
+       DISCLAIMER
+    ═══════════════════════════════════════════════ */
+    .disclaimer {
+      background: var(--amber-pale);
+      border-top: 2px solid var(--amber);
+      padding: 20px 28px;
+      text-align: center;
+    }
+    .disclaimer p {
+      font-size: 12.5px;
+      color: #78350F;
+      max-width: 800px;
+      margin: 0 auto;
+      line-height: 1.6;
+    }
+    .disclaimer strong { font-weight: 700; }
+
+    /* ═══════════════════════════════════════════════
+       FOOTER
+    ═══════════════════════════════════════════════ */
+    .footer {
+      background: var(--navy);
+      padding: 36px 28px;
+      text-align: center;
+    }
+    .footer-logo {
+      font-family: 'Sora', sans-serif;
+      font-size: 18px;
+      font-weight: 800;
+      color: var(--white);
+      margin-bottom: 8px;
+    }
+    .footer-logo span { color: #60B4FF; }
+    .footer-sub {
+      font-size: 13px;
+      color: rgba(255,255,255,.45);
+      margin-bottom: 20px;
+    }
+    .footer-links {
+      display: flex;
+      justify-content: center;
+      gap: 24px;
+      flex-wrap: wrap;
+      margin-bottom: 20px;
+    }
+    .footer-links a {
+      font-size: 13px;
+      color: rgba(255,255,255,.5);
+      text-decoration: none;
+      transition: color .15s;
+    }
+    .footer-links a:hover { color: rgba(255,255,255,.9); }
+    .footer-copy {
+      font-size: 12px;
+      color: rgba(255,255,255,.3);
+    }
+
+    /* ═══════════════════════════════════════════════
+       LOADING STATE
+    ═══════════════════════════════════════════════ */
+    .loading-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(255,255,255,.85);
+      backdrop-filter: blur(6px);
+      z-index: 999;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 20px;
+    }
+    .loading-overlay.active { display: flex; }
+    .spinner {
+      width: 52px;
+      height: 52px;
+      border: 4px solid var(--silver-mid);
+      border-top-color: var(--blue);
+      border-radius: 50%;
+      animation: spin .8s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .loading-text {
+      font-family: 'Sora', sans-serif;
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--navy);
+    }
+    .loading-sub { font-size: 13px; color: var(--text-soft); }
+
+    /* ═══════════════════════════════════════════════
+       RESPONSIVE
+    ═══════════════════════════════════════════════ */
+    @media (max-width: 1100px) {
+      .hero-inner       { grid-template-columns: 1fr; }
+      .hero-chart       { display: none; }
+      .pipeline-steps   { grid-template-columns: repeat(3, 1fr); gap: 20px; }
+      .pipeline-steps::before { display: none; }
+      .summary-grid     { grid-template-columns: repeat(3, 1fr); }
+      .hiw-grid         { grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (max-width: 700px) {
+      .nav { display: none; }
+      .summary-grid { grid-template-columns: repeat(2, 1fr); }
+      .stocks-grid  { grid-template-columns: 1fr; }
+      .hiw-grid     { grid-template-columns: 1fr; }
+      .pipeline-steps { grid-template-columns: repeat(2, 1fr); }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════════════════
+     LOADING OVERLAY
+═══════════════════════════════════════════════════ -->
+<div class="loading-overlay" id="loadingOverlay">
+  <div class="spinner"></div>
+  <div class="loading-text">Running Scan...</div>
+  <div class="loading-sub" id="loadingStep">Fetching price data for 209 stocks</div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════
+     TICKER TAPE
+═══════════════════════════════════════════════════ -->
+<div class="ticker-wrap" aria-hidden="true">
+  <div class="ticker-track" id="tickerTrack">
+    <!-- Populated by JS -->
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════
+     HEADER
+═══════════════════════════════════════════════════ -->
+<header class="header">
+  <div class="header-inner">
+    <a class="logo" href="#">
+      <div class="logo-icon">
+        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M3 17l4-8 4 4 4-7 4 4" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+          <circle cx="21" cy="10" r="2" fill="#34D399"/>
+        </svg>
+      </div>
+      <div>
+        <div class="logo-text">Guru<span>Edge</span></div>
+        <div class="logo-tag">NSE Swing Intelligence</div>
+      </div>
+    </a>
+
+    <nav class="nav" aria-label="Main navigation">
+      <a href="#dashboard" class="active">Dashboard</a>
+      <a href="#pipeline">How It Works</a>
+      <a href="#scanner">Scanner</a>
+      <a href="#" class="nav-cta" onclick="runBackendScan(event)">Run Scan ↗</a>
+    </nav>
+
+    <div class="market-status" aria-live="polite">
+      <div class="status-dot"></div>
+      <span id="marketStatusText">NSE Live</span>
+    </div>
+  </div>
+</header>
+
+<!-- ═══════════════════════════════════════════════════
+     HERO
+═══════════════════════════════════════════════════ -->
+<section class="hero" aria-labelledby="hero-title">
+  <div class="hero-grid" aria-hidden="true"></div>
+  <div class="hero-inner">
+    <div>
+      <div class="hero-eyebrow">
+        <div class="hero-eyebrow-dot"></div>
+        AI-Powered Stock Intelligence
+      </div>
+      <h1 id="hero-title">
+        Find NSE's Best<br/>
+        <em>Swing Trade Setups</em><br/>
+        Every Week
+      </h1>
+      <p class="hero-sub">
+        Guru Edge scans Nifty 100 + Midcap 150 stocks using EMA, RSI,
+        Fibonacci retracement, trendline analysis, and AI-powered fundamental
+        screening — shortlisting the top 10–15 stocks for 5–10% swing trades.
+      </p>
+      <div class="hero-badges">
+        <div class="badge"><div class="badge-dot" style="background:#60B4FF"></div>EMA 20/50</div>
+        <div class="badge"><div class="badge-dot" style="background:#34D399"></div>RSI Filter</div>
+        <div class="badge"><div class="badge-dot" style="background:#FBBF24"></div>Fibonacci</div>
+        <div class="badge"><div class="badge-dot" style="background:#A78BFA"></div>Trendlines</div>
+        <div class="badge"><div class="badge-dot" style="background:#F87171"></div>Fundamentals</div>
+        <div class="badge"><div class="badge-dot" style="background:#67E8F9"></div>LLM Analysis</div>
+      </div>
+      <div class="hero-stats">
+        <div class="hero-stat">
+          <div class="hero-stat-val" id="heroStocksScanned">209</div>
+          <div class="hero-stat-lbl">Stocks Scanned</div>
+        </div>
+        <div class="hero-stat">
+          <div class="hero-stat-val" id="heroSignals">--</div>
+          <div class="hero-stat-lbl">Signals Found</div>
+        </div>
+        <div class="hero-stat">
+          <div class="hero-stat-val" id="heroTopGrade">--</div>
+          <div class="hero-stat-lbl">A++ Setups</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Chart preview -->
+    <div class="hero-chart" aria-hidden="true">
+      <div class="chart-header">
+        <div class="chart-title">Latest Scan Results</div>
+        <div class="chart-badge" id="heroScanTime">Run scan to see results</div>
+      </div>
+      <canvas id="heroChart" width="460" height="240"></canvas>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════
+     PIPELINE
+═══════════════════════════════════════════════════ -->
+<section class="pipeline" id="pipeline" aria-labelledby="pipeline-title">
+  <div class="pipeline-inner">
+    <div class="section-label">How It Works</div>
+    <h2 class="section-title" id="pipeline-title">6-Layer Intelligent Filter</h2>
+    <p class="section-sub">Every stock passes through 6 analytical layers before reaching your watchlist.</p>
+    <div class="pipeline-steps" role="list">
+      <div class="pipe-step" role="listitem">
+        <div class="pipe-num" style="background:linear-gradient(135deg,#1E6FD9,#0D4FA8)">1</div>
+        <div class="pipe-name">EMA Signal</div>
+        <div class="pipe-desc">Golden Cross & EMA 20 Bounce detection on all 209 stocks</div>
+      </div>
+      <div class="pipe-step" role="listitem">
+        <div class="pipe-num" style="background:linear-gradient(135deg,#00A86B,#007A4D)">2</div>
+        <div class="pipe-name">RSI Filter</div>
+        <div class="pipe-desc">Grade A/B/C based on RSI zone, slope and oversold recovery</div>
+      </div>
+      <div class="pipe-step" role="listitem">
+        <div class="pipe-num" style="background:linear-gradient(135deg,#F59E0B,#B45309)">3</div>
+        <div class="pipe-name">Trendlines</div>
+        <div class="pipe-desc">7 scenarios — HH+HL, breakout retest, bull flag, bull trap filter</div>
+      </div>
+      <div class="pipe-step" role="listitem">
+        <div class="pipe-num" style="background:linear-gradient(135deg,#8B5CF6,#6D28D9)">4</div>
+        <div class="pipe-name">Fibonacci</div>
+        <div class="pipe-desc">38.2%, 50%, 61.8% golden zone + EMA confluence detection</div>
+      </div>
+      <div class="pipe-step" role="listitem">
+        <div class="pipe-num" style="background:linear-gradient(135deg,#EF4444,#B91C1C)">5</div>
+        <div class="pipe-name">Fundamentals</div>
+        <div class="pipe-desc">Debt, promoter pledge, FII activity, earnings from 4 sources</div>
+      </div>
+      <div class="pipe-step" role="listitem">
+        <div class="pipe-num" style="background:linear-gradient(135deg,#06B6D4,#0E7490)">6</div>
+        <div class="pipe-name">LLM Analysis</div>
+        <div class="pipe-desc">GPT-4o interprets data with Indian sector context</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════
+     MAIN DASHBOARD
+═══════════════════════════════════════════════════ -->
+<main class="dashboard" id="dashboard">
+
+  <div class="dash-top">
+    <div>
+      <h2 style="font-family:'Sora',sans-serif;font-size:22px;font-weight:700;color:var(--navy);letter-spacing:-.3px" id="scanner">
+        Watchlist Results
+      </h2>
+      <p style="font-size:13px;color:var(--text-soft);margin-top:3px" id="scanTimestamp">
+        Load sample data or run a scan to see results
+      </p>
+    </div>
+    <div class="scan-meta">
+      <div class="scan-badge">
+        Sector cap: <strong>3 max</strong>
+      </div>
+      <div class="scan-badge">
+        Universe: <strong>Nifty100 + Midcap150</strong>
+      </div>
+      <button class="btn-scan" onclick="loadLatestScan()" aria-label="Load latest scan results">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/>
+          <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/>
+        </svg>
+        Load Latest Scan
+      </button>
+    </div>
+  </div>
+
+  <!-- Summary Cards -->
+  <div class="summary-grid" role="region" aria-label="Scan summary">
+    <div class="sum-card aplus2">
+      <div class="sum-label">Grade A++</div>
+      <div class="sum-val" id="countAplus2">--</div>
+      <div class="sum-sub">All 6 layers confirmed</div>
+    </div>
+    <div class="sum-card aplus">
+      <div class="sum-label">Grade A+</div>
+      <div class="sum-val" id="countAplus">--</div>
+      <div class="sum-sub">Strong entries</div>
+    </div>
+    <div class="sum-card a">
+      <div class="sum-label">Grade A</div>
+      <div class="sum-val" id="countA">--</div>
+      <div class="sum-sub">Good entries</div>
+    </div>
+    <div class="sum-card b">
+      <div class="sum-label">Grade B</div>
+      <div class="sum-val" id="countB">--</div>
+      <div class="sum-sub">Half position</div>
+    </div>
+    <div class="sum-card total">
+      <div class="sum-label">Total Watchlist</div>
+      <div class="sum-val" id="countTotal">--</div>
+      <div class="sum-sub">Max 3 per sector</div>
+    </div>
+  </div>
+
+  <!-- Filter bar -->
+  <div class="filter-bar" role="group" aria-label="Filter by grade">
+    <span class="filter-label">Filter:</span>
+    <button class="filter-btn active" onclick="filterCards('all')"  aria-pressed="true">All</button>
+    <button class="filter-btn f-aplus2" onclick="filterCards('A++')" aria-pressed="false">A++ Only</button>
+    <button class="filter-btn"          onclick="filterCards('A+')"  aria-pressed="false">A+</button>
+    <button class="filter-btn f-a"      onclick="filterCards('A')"   aria-pressed="false">A</button>
+    <button class="filter-btn f-b"      onclick="filterCards('B')"   aria-pressed="false">B</button>
+  </div>
+
+  <!-- Stock Cards -->
+  <div class="stocks-grid" id="stocksGrid" aria-live="polite" aria-label="Stock results">
+    <div style="grid-column:1/-1;text-align:center;padding:60px 20px;color:var(--text-soft)">
+      <div style="font-size:40px;margin-bottom:16px">📊</div>
+      <div style="font-family:'Sora',sans-serif;font-size:18px;font-weight:600;color:var(--navy);margin-bottom:8px">
+        No scan results yet
+      </div>
+      <div style="font-size:14px">Click <strong>Load Latest Scan</strong> to view recent results, or click <strong>Run Scan ↗</strong> in the top menu to start a fresh scan.</div>
+    </div>
+  </div>
+</main>
+
+<!-- ═══════════════════════════════════════════════════
+     HOW IT WORKS CARDS
+═══════════════════════════════════════════════════ -->
+<section class="howitworks" aria-labelledby="hiw-title">
+  <div class="hiw-inner">
+    <div class="section-label">Features</div>
+    <h2 class="section-title" id="hiw-title">Built for Indian Swing Traders</h2>
+    <p class="section-sub">Every feature is designed specifically for NSE/BSE large and mid-cap swing trading.</p>
+    <div class="hiw-grid">
+      <div class="hiw-card">
+        <div class="hiw-icon" style="background:#EFF6FF">📈</div>
+        <div class="hiw-title">EMA + RSI Confluence</div>
+        <div class="hiw-desc">Golden Cross and EMA 20 bounce signals filtered through RSI momentum grading — A, B, C, or FAIL for every stock.</div>
+      </div>
+      <div class="hiw-card">
+        <div class="hiw-icon" style="background:#F5F3FF">🌀</div>
+        <div class="hiw-title">Fibonacci Golden Zone</div>
+        <div class="hiw-desc">Detects stocks sitting at 38.2%, 50%, and 61.8% retracement levels with EMA confluence — the highest probability entry zones.</div>
+      </div>
+      <div class="hiw-card">
+        <div class="hiw-icon" style="background:#FFF7ED">📐</div>
+        <div class="hiw-title">7 Trendline Scenarios</div>
+        <div class="hiw-desc">Automatically detects HH+HL uptrends, bullish rejection, breakout retests, and removes downtrend and bull trap setups.</div>
+      </div>
+      <div class="hiw-card">
+        <div class="hiw-icon" style="background:#ECFDF5">🏦</div>
+        <div class="hiw-title">Fundamental Screening</div>
+        <div class="hiw-desc">Removes stocks with high promoter pledge, consecutive losses, or dangerous debt — the traps that fool technical signals.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════
+     DISCLAIMER
+═══════════════════════════════════════════════════ -->
+<div class="disclaimer" role="note">
+  <p>
+    <strong>⚠ Disclaimer:</strong> Guru Edge is a research and screening tool for educational purposes only.
+    It does not constitute financial advice or a recommendation to buy or sell any security.
+    Stock trading involves substantial risk of loss. Always consult a SEBI-registered financial advisor
+    before making investment decisions. Past performance of any signal or strategy does not guarantee future results.
+  </p>
+</div>
+
+<!-- ═══════════════════════════════════════════════════
+     FOOTER
+═══════════════════════════════════════════════════ -->
+<footer class="footer">
+  <div class="footer-logo">Guru<span>Edge</span></div>
+  <div class="footer-sub">NSE Swing Trade Intelligence · Powered by AI</div>
+  <nav class="footer-links" aria-label="Footer navigation">
+    <a href="#">Home</a>
+    <a href="#pipeline">How It Works</a>
+    <a href="#dashboard">Scanner</a>
+    <a href="#">Disclaimer</a>
+    <a href="#">Contact</a>
+  </nav>
+  <div class="footer-copy">© 2026 Guru Edge. For educational use only. Not SEBI registered.</div>
+</footer>
+
+<!-- ═══════════════════════════════════════════════════
+     JAVASCRIPT
+═══════════════════════════════════════════════════ -->
+<script>
+/* ── Ticker Tape ───────────────────────────────────── */
+const TICKER_DATA = [
+  {sym:"RELIANCE",price:"2918.45",chg:"+1.2%",up:true},
+  {sym:"TCS",     price:"4215.30",chg:"+0.8%",up:true},
+  {sym:"HDFCBANK",price:"1742.60",chg:"-0.3%",up:false},
+  {sym:"INFY",    price:"1895.20",chg:"+2.1%",up:true},
+  {sym:"ICICIBANK",price:"1324.75",chg:"+1.5%",up:true},
+  {sym:"TECHM",   price:"1483.50",chg:"+3.2%",up:true},
+  {sym:"BIKAJI",  price:"654.95", chg:"+4.1%",up:true},
+  {sym:"CIPLA",   price:"1401.30",chg:"+1.8%",up:true},
+  {sym:"COALINDIA",price:"472.30",chg:"+0.9%",up:true},
+  {sym:"IDFCFIRSTB",price:"72.35",chg:"+2.4%",up:true},
+  {sym:"APOLLOHOSP",price:"8304.50",chg:"+1.3%",up:true},
+  {sym:"BAJAJ-AUTO",price:"10342.00",chg:"-0.5%",up:false},
+  {sym:"OFSS",    price:"9936.50",chg:"+2.7%",up:true},
+  {sym:"COFORGE", price:"1435.50",chg:"+1.9%",up:true},
+  {sym:"JSWENERGY",price:"584.20",chg:"+1.1%",up:true},
+];
+
+function buildTicker(){
+  const track = document.getElementById('tickerTrack');
+  const double = [...TICKER_DATA, ...TICKER_DATA]; // duplicate for seamless loop
+  track.innerHTML = double.map(t => `
+    <div class="ticker-item">
+      <div class="ticker-dot ${t.up?'up':'dn'}"></div>
+      <span class="sym">${t.sym}</span>
+      ₹${t.price}
+      <span class="${t.up?'up':'dn'}">${t.chg}</span>
+    </div>
+  `).join('');
+}
+buildTicker();
+
+/* ── Market status clock ───────────────────────────── */
+function updateMarketStatus(){
+  const now = new Date();
+  const ist = new Date(now.toLocaleString('en-US',{timeZone:'Asia/Kolkata'}));
+  const h = ist.getHours(), m = ist.getMinutes();
+  const isOpen = (h > 9 || (h === 9 && m >= 15)) && (h < 15 || (h === 15 && m <= 30));
+  const isWeekday = ist.getDay() >= 1 && ist.getDay() <= 5;
+  const open = isWeekday && isOpen;
+  const el = document.getElementById('marketStatusText');
+  const dot = document.querySelector('.status-dot');
+  if(open){
+    el.textContent = 'NSE Live';
+    dot.style.background = 'var(--green)';
+  } else {
+    el.textContent = 'Market Closed';
+    dot.style.background = 'var(--amber)';
+    dot.style.boxShadow = '0 0 0 3px rgba(245,158,11,.2)';
+  }
+}
+updateMarketStatus();
+setInterval(updateMarketStatus, 60000);
+
+/* ── Sample scan data ──────────────────────────────── */
+const SAMPLE_DATA = [
+  {
+    grade:"A++", symbol:"TECHM",    sector:"IT",
+    price:1483.50, ema20:1466.87, ema50:1456.46,
+    sl:1434.61, tgt5:1557.67, tgt10:1631.85,
+    rsi:58.4, rsiSlope:4.2, rr:2.1,
+    volRatio:1.8, risk:3.3,
+    emaSignal:"GoldenX(5d) + EMA20 Bounce",
+    tlCount:2, tlSignals:"T3: Uptrend HH+HL | T5: Bullish rejection",
+    fibLevel:"50.0", fibGolden:false,
+    fundGrade:"GREEN",
+    fundSummary:"Strong IT company, ROE 28%, zero pledge, FII buying",
+    llmRisk:"US tech slowdown could affect margins",
+    change:"+3.2%", changeUp:true,
+  },
+  {
+    grade:"A++", symbol:"IDFCFIRSTB",sector:"Banking",
+    price:72.35, ema20:70.35, ema50:69.82,
+    sl:68.77, tgt5:75.97, tgt10:79.59,
+    rsi:54.1, rsiSlope:3.8, rr:1.9,
+    volRatio:1.2, risk:4.9,
+    emaSignal:"GoldenX(5d) + EMA20 Bounce",
+    tlCount:3, tlSignals:"T3: Uptrend HH+HL | T4: 3rd touch | T7: Retest",
+    fibLevel:"61.8", fibGolden:true,
+    fundGrade:"GREEN",
+    fundSummary:"Improving NPA trend, promoter 40%, FII buying 2 months",
+    llmRisk:"High D/E normal for banks — no red flags",
+    change:"+2.4%", changeUp:true,
+  },
+  {
+    grade:"A+", symbol:"BIKAJI",    sector:"FMCG",
+    price:654.95, ema20:655.21, ema50:656.17,
+    sl:646.33, tgt5:687.70, tgt10:720.45,
+    rsi:56.8, rsiSlope:5.1, rr:2.3,
+    volRatio:1.2, risk:1.3,
+    emaSignal:"GoldenX(4d ago)",
+    tlCount:1, tlSignals:"T3: Uptrend HH+HL confirmed",
+    fibLevel:"38.2", fibGolden:false,
+    fundGrade:"GREEN",
+    fundSummary:"FMCG growth 18% YoY, zero debt, promoter 69%",
+    llmRisk:"High PE 65 — justified by FMCG growth premium",
+    change:"+4.1%", changeUp:true,
+  },
+  {
+    grade:"A+", symbol:"CIPLA",     sector:"Pharma",
+    price:1401.30, ema20:1372.46, ema50:1341.28,
+    sl:1321.16, tgt5:1471.37, tgt10:1541.43,
+    rsi:52.3, rsiSlope:2.9, rr:1.8,
+    volRatio:0.9, risk:5.7,
+    emaSignal:"EMA20 Bounce",
+    tlCount:2, tlSignals:"T5: Bullish rejection | T7: Breakout retest",
+    fibLevel:"50.0", fibGolden:false,
+    fundGrade:"GREEN",
+    fundSummary:"Strong US generic pipeline, ROE 17%, no pledge",
+    llmRisk:"Currency risk on US revenue exports",
+    change:"+1.8%", changeUp:true,
+  },
+  {
+    grade:"A", symbol:"APOLLOHOSP", sector:"Healthcare",
+    price:8304.50, ema20:8144.11, ema50:7920.12,
+    sl:7801.32, tgt5:8719.73, tgt10:9134.95,
+    rsi:61.2, rsiSlope:3.1, rr:1.7,
+    volRatio:0.4, risk:6.1,
+    emaSignal:"EMA20 Bounce",
+    tlCount:1, tlSignals:"T3: Uptrend HH+HL confirmed",
+    fibLevel:"-", fibGolden:false,
+    fundGrade:"YELLOW",
+    fundSummary:"Good growth but high PE 72, moderate D/E 1.4",
+    llmRisk:"High PE leaves little margin for error",
+    change:"+1.3%", changeUp:true,
+  },
+  {
+    grade:"A", symbol:"COALINDIA",  sector:"Energy",
+    price:472.30, ema20:465.76, ema50:457.89,
+    sl:451.02, tgt5:495.92, tgt10:519.53,
+    rsi:55.7, rsiSlope:1.8, rr:2.2,
+    volRatio:0.4, risk:4.5,
+    emaSignal:"EMA20 Bounce",
+    tlCount:0, tlSignals:"None",
+    fibLevel:"38.2", fibGolden:false,
+    fundGrade:"GREEN",
+    fundSummary:"PSU dividend play, zero pledge, consistent profits",
+    llmRisk:"Policy risk on coal phase-out timeline",
+    change:"+0.9%", changeUp:true,
+  },
+  {
+    grade:"A", symbol:"OFSS",       sector:"IT",
+    price:9936.50, ema20:9728.34, ema50:8928.02,
+    sl:8794.10, tgt5:10433.33, tgt10:10930.15,
+    rsi:63.4, rsiSlope:2.2, rr:1.6,
+    volRatio:0.7, risk:11.5,
+    emaSignal:"EMA20 Bounce",
+    tlCount:1, tlSignals:"T6: Closing breakout above ₹9500",
+    fibLevel:"-", fibGolden:false,
+    fundGrade:"GREEN",
+    fundSummary:"Oracle subsidiary, ROE 35%, excellent margins, zero debt",
+    llmRisk:"Premium valuation — needs strong Q4 guidance",
+    change:"+2.7%", changeUp:true,
+  },
+  {
+    grade:"B", symbol:"BANDHANBNK", sector:"Banking",
+    price:205.87, ema20:200.64, ema50:189.71,
+    sl:186.86, tgt5:216.16, tgt10:226.46,
+    rsi:48.2, rsiSlope:1.4, rr:1.5,
+    volRatio:0.7, risk:9.2,
+    emaSignal:"EMA20 Bounce",
+    tlCount:0, tlSignals:"None",
+    fibLevel:"-", fibGolden:false,
+    fundGrade:"YELLOW",
+    fundSummary:"Microfinance stress in rural portfolio — monitor NPA",
+    llmRisk:"Rural NPA risk remains elevated — proceed with caution",
+    change:"+0.7%", changeUp:true,
+  },
+];
+
+/* ── Grade helpers ─────────────────────────────────── */
+function gradeClass(g){
+  if(g==="A++") return "aplus2";
+  if(g==="A+")  return "aplus";
+  if(g==="A")   return "a";
+  return "b";
+}
+function gradeBg(g){
+  if(g==="A++") return "#8B5CF6";
+  if(g==="A+")  return "#1E6FD9";
+  if(g==="A")   return "#00A86B";
+  return "#F59E0B";
+}
+
+/* ── Build one stock card ──────────────────────────── */
+function buildCard(s){
+  const gc = gradeClass(s.grade);
+  const fc = s.fundGrade === "GREEN" ? "green" : s.fundGrade === "YELLOW" ? "yellow" : "red";
+  const fdot = fc;
+
+  // Price position between SL and T10
+  const range = s.tgt10 - s.sl;
+  const pos   = Math.min(Math.max((s.price - s.sl) / range * 100, 2), 96);
+
+  // Signal tags
+  const tags = [
+    `<span class="sig-tag ema">${s.emaSignal}</span>`,
+    `<span class="sig-tag rsi">RSI ${s.rsi} ↑${s.rsiSlope}</span>`,
+  ];
+  if(s.tlCount > 0) tags.push(`<span class="sig-tag tl">TL ×${s.tlCount}</span>`);
+  if(s.fibLevel !== "-") tags.push(`<span class="sig-tag fib">Fib ${s.fibLevel}%${s.fibGolden?' ✦':''}</span>`);
+  tags.push(`<span class="sig-tag fund ${fc === 'yellow' ? 'yellow' : ''}">Fund: ${s.fundGrade}</span>`);
+
+  return `
+  <article class="stock-card grade-${gc}" data-grade="${s.grade}" aria-label="${s.symbol} - Grade ${s.grade}">
+    <div class="card-header">
+      <div>
+        <div class="card-symbol">${s.symbol}</div>
+        <div class="card-sector">${s.sector}</div>
+      </div>
+      <div class="grade-pill ${gc}" aria-label="Grade ${s.grade}">
+        ${s.grade==="A++"?'⭐ ':''}${s.grade}
+      </div>
+    </div>
+
+    <div class="card-price-row">
+      <div class="card-price">₹${s.price.toLocaleString('en-IN',{minimumFractionDigits:2})}</div>
+      <div class="card-change ${s.changeUp?'up':'dn'}">${s.change}</div>
+    </div>
+
+    <div class="price-track-wrap" aria-label="Price between stop loss and target">
+      <div class="price-track-labels">
+        <span>SL ₹${s.sl}</span>
+        <span>Target ₹${s.tgt10}</span>
+      </div>
+      <div class="price-track">
+        <div class="price-track-fill" style="width:${pos}%"></div>
+        <div class="price-track-dot" style="left:${pos}%" title="Current ₹${s.price}"></div>
+      </div>
+    </div>
+
+    <div class="card-signals">${tags.join('')}</div>
+
+    <div class="card-metrics" role="list">
+      <div class="card-metric" role="listitem">
+        <div class="metric-lbl">SL</div>
+        <div class="metric-val red">₹${s.sl}</div>
+      </div>
+      <div class="card-metric" role="listitem">
+        <div class="metric-lbl">Target 5%</div>
+        <div class="metric-val green">₹${s.tgt5}</div>
+      </div>
+      <div class="card-metric" role="listitem">
+        <div class="metric-lbl">R:R Ratio</div>
+        <div class="metric-val ${s.rr>=2?'green':s.rr>=1.5?'amber':'red'}">${s.rr}:1</div>
+      </div>
+      <div class="card-metric" role="listitem">
+        <div class="metric-lbl">Vol Ratio</div>
+        <div class="metric-val ${s.volRatio>=1.5?'green':''}">
+          ${s.volRatio}x${s.volRatio>=1.5?' ↑':''}
+        </div>
+      </div>
+    </div>
+
+    <div class="card-fund">
+      <div class="fund-badge ${fc}">
+        <div class="fund-dot ${fdot}"></div>
+        Fund: ${s.fundGrade}
+      </div>
+      <div class="fund-note">${s.llmRisk}</div>
+    </div>
+  </article>`;
+}
+
+/* ── Render cards ──────────────────────────────────── */
+function renderCards(data){
+  const grid = document.getElementById('stocksGrid');
+  if(!data || !data.length){
+    grid.innerHTML = `<div style="grid-column:1/-1;text-align:center;padding:60px 20px;color:var(--text-soft)">
+      <div style="font-size:40px;margin-bottom:16px">📊</div>
+      <div style="font-family:'Sora',sans-serif;font-size:18px;font-weight:600;color:var(--navy);margin-bottom:8px">No results match this filter</div>
+    </div>`;
+    return;
+  }
+  grid.innerHTML = data.map(buildCard).join('');
+}
+
+/* ── Update summary counts ─────────────────────────── */
+function updateSummary(data){
+  const counts = {"A++":0,"A+":0,"A":0,"B":0,"C":0};
+  data.forEach(d => { counts[d.grade] = (counts[d.grade]||0) + 1; });
+  document.getElementById('countAplus2').textContent = counts["A++"];
+  document.getElementById('countAplus').textContent  = counts["A+"];
+  document.getElementById('countA').textContent      = counts["A"];
+  document.getElementById('countB').textContent      = counts["B"];
+  document.getElementById('countTotal').textContent  = data.length;
+  // Hero stats
+  document.getElementById('heroSignals').textContent = data.length;
+  document.getElementById('heroTopGrade').textContent= counts["A++"];
+}
+
+/* ── Filter cards ──────────────────────────────────── */
+let currentData = [];
+function filterCards(grade){
+  // Update button states
+  document.querySelectorAll('.filter-btn').forEach(b => {
+    b.classList.remove('active');
+    b.setAttribute('aria-pressed','false');
+  });
+  event.target.classList.add('active');
+  event.target.setAttribute('aria-pressed','true');
+
+  const filtered = grade === 'all' ? currentData
+    : currentData.filter(d => d.grade === grade);
+  renderCards(filtered);
+}
+
+/* ── Map Backend JSON to Frontend model ──────────────── */
+function mapBackendData(data) {
+  return data.map(row => ({
+    grade: row.Grade || "B",
+    symbol: row.Symbol || "UNKNOWN",
+    sector: row.Sector || "Other",
+    price: parseFloat(row.Price) || 0,
+    sl: parseFloat(row.SL) || 0,
+    tgt5: parseFloat(row.Target_5pct) || 0,
+    tgt10: parseFloat(row.Target_10pct) || 0,
+    rr: parseFloat(row.RR_Ratio) || 0,
+    volRatio: parseFloat(row.Vol_Ratio) || 0,
+    emaSignal: row.EMA_Signal || "",
+    tlCount: parseInt(row.TL_Count) || 0,
+    tlSignals: row.TL_Signals || "None",
+    fibLevel: row.Fib_Level || "-",
+    fibGolden: row.Fib_Confluence || false,
+    rsi: parseFloat(row.RSI_Now) || 0,
+    rsiSlope: parseFloat(row.RSI_Slope) || 0,
+    fundGrade: row.Fund_Grade || "YELLOW",
+    fundSummary: row.Fund_Summary || "",
+    llmRisk: row.LLM_Key_Risk || row.Fund_Summary || "",
+    change: "+0.0%",
+    changeUp: true
+  }));
+}
+
+/* ── Fetch Latest Scan ─────────────────────────────── */
+async function loadLatestScan(){
+  const overlay = document.getElementById('loadingOverlay');
+  const step    = document.getElementById('loadingStep');
+  overlay.classList.add('active');
+  step.textContent = "Fetching latest scan results from server...";
+
+  try {
+    const res = await fetch('/api/latest-scan');
+    const json = await res.json();
+    if (json.status === 'success') {
+      currentData = mapBackendData(json.data);
+      renderCards(currentData);
+      updateSummary(currentData);
+      const date = new Date(json.timestamp * 1000);
+      document.getElementById('scanTimestamp').textContent = `Loaded scan from: ${date.toLocaleString('en-IN', {weekday:'long',day:'numeric',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'})}`;
+      document.getElementById('heroScanTime').textContent = `Scanned ${date.toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit'})}`;
+      drawHeroChart(currentData);
+    } else {
+      alert("Error: " + json.message);
+    }
+  } catch (err) {
+    alert("Error fetching data. Ensure the Flask server is running on port 5000.");
+  }
+  
+  overlay.classList.remove('active');
+  document.getElementById('dashboard').scrollIntoView({behavior:'smooth'});
+}
+
+/* ── Run Fresh Scan via Backend ─────────────────────── */
+async function runBackendScan(e){
+  if (e) e.preventDefault();
+  const overlay = document.getElementById('loadingOverlay');
+  const step    = document.getElementById('loadingStep');
+  overlay.classList.add('active');
+  
+  const steps = [
+    "Starting python backend...",
+    "Fetching data for 209 stocks...",
+    "Running EMA & RSI filters...",
+    "Analysing trendlines...",
+    "Fetching fundamentals...",
+    "Running LLM analysis (this takes a while)..."
+  ];
+  let i = 0;
+  const interval = setInterval(() => {
+    step.textContent = steps[i++ % steps.length];
+  }, 4000);
+
+  try {
+    const res = await fetch('/api/scan', { method: 'POST' });
+    const json = await res.json();
+    if (json.status === 'success') {
+      currentData = mapBackendData(json.data);
+      renderCards(currentData);
+      updateSummary(currentData);
+      const now = new Date();
+      document.getElementById('scanTimestamp').textContent = `Just ran scan at: ${now.toLocaleString('en-IN', {weekday:'long',day:'numeric',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'})}`;
+      document.getElementById('heroScanTime').textContent = `Scanned ${now.toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit'})}`;
+      drawHeroChart(currentData);
+    } else {
+      alert("Error: " + json.message);
+    }
+  } catch (err) {
+    alert("Error running scan. Check server console. (It might take 3-5 minutes!)");
+  }
+  
+  clearInterval(interval);
+  overlay.classList.remove('active');
+  document.getElementById('dashboard').scrollIntoView({behavior:'smooth'});
+}
+
+/* ── Hero Chart (canvas bar chart) ─────────────────── */
+function drawHeroChart(data){
+  const canvas = document.getElementById('heroChart');
+  if(!canvas) return;
+  const ctx = canvas.getContext('2d');
+  const W = canvas.width, H = canvas.height;
+  ctx.clearRect(0,0,W,H);
+
+  const top5 = data.slice(0,6);
+  const barW = (W - 60) / top5.length;
+  const maxRR = Math.max(...top5.map(d => d.rr)) + 0.5;
+
+  top5.forEach((s, i) => {
+    const x   = 30 + i * barW + barW * .15;
+    const bw  = barW * .7;
+    const bh  = ((s.rr / maxRR) * (H - 60));
+    const y   = H - 36 - bh;
+    const col = s.grade==="A++"?"#8B5CF6":s.grade==="A+"?"#1E6FD9":s.grade==="A"?"#00A86B":"#F59E0B";
+
+    // Bar
+    ctx.fillStyle = col + "55";
+    ctx.beginPath();
+    ctx.roundRect(x, y, bw, bh, [4,4,0,0]);
+    ctx.fill();
+    ctx.fillStyle = col;
+    ctx.beginPath();
+    ctx.roundRect(x, y, bw, 4, [4,4,0,0]);
+    ctx.fill();
+
+    // Label
+    ctx.fillStyle = "rgba(255,255,255,.9)";
+    ctx.font = "bold 10px Inter, sans-serif";
+    ctx.textAlign = "center";
+    ctx.fillText(s.symbol.length > 7 ? s.symbol.slice(0,7) : s.symbol, x + bw/2, H - 14);
+
+    // RR value
+    ctx.fillStyle = "rgba(255,255,255,.7)";
+    ctx.font = "10px JetBrains Mono, monospace";
+    ctx.fillText(s.rr+"x", x + bw/2, y - 5);
+  });
+
+  // Y axis label
+  ctx.fillStyle = "rgba(255,255,255,.4)";
+  ctx.font = "10px Inter, sans-serif";
+  ctx.textAlign = "left";
+  ctx.fillText("R:R Ratio", 2, 12);
+}
+
+/* ── CSV paste/import support ─────────────────────── */
+// Allow users to paste their CSV output from main_scanner.py
+// and have it render in the dashboard
+function parseCSVRow(row){
+  const cols = row.split(",");
+  if(cols.length < 10) return null;
+  return {
+    grade:      cols[0]?.trim() || "B",
+    symbol:     cols[1]?.trim() || "UNKNOWN",
+    sector:     cols[2]?.trim() || "Other",
+    emaSignal:  cols[3]?.trim() || "",
+    tlCount:    parseInt(cols[4]) || 0,
+    tlSignals:  cols[5]?.trim() || "None",
+    fibLevel:   cols[6]?.trim() || "-",
+    fibSignal:  cols[7]?.trim() || "None",
+    fibGolden:  false,
+    rsi:        parseFloat(cols[9]) || 0,
+    rsiSlope:   parseFloat(cols[10]) || 0,
+    price:      parseFloat(cols[12]) || 0,
+    sl:         parseFloat(cols[14]) || 0,
+    tgt5:       parseFloat(cols[15]) || 0,
+    tgt10:      parseFloat(cols[16]) || 0,
+    risk:       parseFloat(cols[17]) || 0,
+    rr:         parseFloat(cols[18]) || 0,
+    volRatio:   parseFloat(cols[19]) || 0,
+    fundGrade:  "YELLOW",
+    fundSummary:"",
+    llmRisk:    "",
+    change:     "+0.0%",
+    changeUp:   true,
+  };
+}
+
+/* ── Init ───────────────────────────────────────────── */
+window.addEventListener('DOMContentLoaded', () => {
+  document.getElementById('scanTimestamp').textContent =
+    `Ready to scan · ${new Date().toLocaleDateString('en-IN',{weekday:'long',day:'numeric',month:'long',year:'numeric'})}`;
+});
+</script>
+
+</body>
+</html>

@@ -1,0 +1,32 @@
+# ============================================================
+#  GURU EDGE — Indian Stock Scanner
+#  Requirements File
+#
+#  Install all dependencies:
+#    pip install -r requirements.txt
+#
+#  Python version: 3.9 or higher recommended
+# ============================================================
+
+# ── Data & Analysis ──────────────────────────────────────
+yfinance>=0.2.36          # NSE/BSE stock price data
+pandas>=2.0.0             # Data processing
+pandas-ta>=0.3.14b        # Technical indicators (EMA, RSI)
+numpy>=1.24.0             # Numerical calculations
+
+# ── Web Scraping (Screener.in + NSE) ─────────────────────
+requests>=2.31.0          # HTTP requests
+beautifulsoup4>=4.12.0    # HTML parsing for Screener.in
+lxml>=4.9.0               # Fast HTML/XML parser (bs4 backend)
+
+# ── News Sentiment ───────────────────────────────────────
+feedparser>=6.0.10        # Google News RSS feed parsing
+
+# ── LLM Analysis ─────────────────────────────────────────
+openai>=1.30.0            # OpenAI GPT API (gpt-4o-mini)
+
+# ── Terminal Output ───────────────────────────────────────
+colorama>=0.4.6           # Colored terminal output (Windows safe)
+
+# ── Web Backend ──────────────────────────────────────────
+Flask>=2.3.0              # Web server backend
